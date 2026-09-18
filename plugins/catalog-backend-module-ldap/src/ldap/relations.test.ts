@@ -57,8 +57,22 @@ const emptyRelations = () => ({
 });
 
 describe('resolveOrgRelations', () => {
-  it('yields while indexing a large organization', async () => {
+  it('does not yield while indexing a small organization', async () => {
     const groups = Array.from({ length: 1_001 }, (_, index) =>
+      group({ metadata: { name: `group-${index}` } }),
+    );
+    let timerRan = false;
+    setImmediate(() => {
+      timerRan = true;
+    });
+
+    await resolveOrgRelations(groups, [], emptyRelations());
+
+    expect(timerRan).toBe(false);
+  });
+
+  it('yields while indexing a large organization', async () => {
+    const groups = Array.from({ length: 5_001 }, (_, index) =>
       group({ metadata: { name: `group-${index}` } }),
     );
     let timerRan = false;
@@ -73,7 +87,7 @@ describe('resolveOrgRelations', () => {
 
   it('yields while resolving relation sources without edges', async () => {
     const userMemberOf = new Map(
-      Array.from({ length: 1_001 }, (_, index) => [
+      Array.from({ length: 5_001 }, (_, index) => [
         `user-${index}`,
         new Set<string>(),
       ]),
@@ -99,7 +113,7 @@ describe('resolveOrgRelations', () => {
         annotations: { [LDAP_DN_ANNOTATION]: 'parent' },
       },
     });
-    const users = Array.from({ length: 999 }, (_, index) =>
+    const users = Array.from({ length: 4_999 }, (_, index) =>
       user({
         metadata: {
           name: `user-${index}`,

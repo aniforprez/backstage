@@ -26,7 +26,7 @@ import {
 } from './constants';
 import { setImmediate } from 'node:timers/promises';
 
-const RELATION_RESOLUTION_BATCH_SIZE = 1_000;
+const RELATION_RESOLUTION_BATCH_SIZE = 5_000;
 
 export type RawLdapRelations = {
   userMemberOf: ReadonlyMap<string, ReadonlySet<string>>;
